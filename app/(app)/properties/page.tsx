@@ -21,13 +21,15 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { companies, filterPropertiesForScope, properties } from "@/lib/data";
+import { companies, filterPropertiesForScope } from "@/lib/data";
 import type { PropertyStatus, PropertyType } from "@/lib/data/types";
 import { formatINR } from "@/lib/format";
 import { useDemoStore } from "@/lib/demo-store";
+import { useEstateStore } from "@/lib/estate-store";
 
 export default function PropertiesPage() {
   const { companyId, viewAsUser } = useDemoStore();
+  const { properties } = useEstateStore();
   const [view, setView] = useState<"table" | "cards">("table");
   const [tab, setTab] = useState<"all" | "vacant">("all");
   const [city, setCity] = useState("all");

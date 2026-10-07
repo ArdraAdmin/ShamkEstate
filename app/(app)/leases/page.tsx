@@ -11,17 +11,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import {
-  filterPropertiesForScope,
-  getProperty,
-  getTenant,
-  leases,
-  prospects,
-  properties,
-} from "@/lib/data";
+import { filterPropertiesForScope, prospects } from "@/lib/data";
 import type { PipelineStage } from "@/lib/data/types";
-import { formatDate, formatINR } from "@/lib/format";
 import { useDemoStore } from "@/lib/demo-store";
+import { useEstateStore } from "@/lib/estate-store";
+import { formatDate, formatINR } from "@/lib/format";
 
 const STAGES: PipelineStage[] = [
   "Prospect Submitted",
@@ -53,6 +47,7 @@ export default function LeasesPage() {
 function LeasesPageInner() {
   const search = useSearchParams();
   const { companyId, viewAsUser } = useDemoStore();
+  const { leases, properties, getTenant, getProperty } = useEstateStore();
   const scopedProps = filterPropertiesForScope(properties, companyId, viewAsUser);
   const ids = new Set(scopedProps.map((p) => p.id));
   const [q, setQ] = useState("");
@@ -61,27 +56,30 @@ function LeasesPageInner() {
   const scopedLeases = leases.filter((l) => l.propertyIds.some((id) => ids.has(id)));
   const scopedProspects = prospects.filter((p) => p.propertyIds.some((id) => ids.has(id)));
 
-  const tenants = useMemo(
+  const leaseRows = useMemo(
     () =>
       scopedLeases.filter((l) => {
         const t = getTenant(l.tenantId);
         if (!q) return true;
         return `${t?.name} ${l.srNumber}`.toLowerCase().includes(q.toLowerCase());
       }),
-    [scopedLeases, q]
+    [scopedLeases, q, getTenant]
   );
 
-  const cards = [...scopedProspects, ...scopedLeases.map((l) => ({
-    id: l.id,
-    srNumber: l.srNumber,
-    tenantName: getTenant(l.tenantId)?.name ?? "—",
-    propertyIds: l.propertyIds,
-    broker: getTenant(l.tenantId)?.broker,
-    submittedBy: "System",
-    stage: l.status,
-    expectedRent: l.leaseAmount,
-    stageHistory: [],
-  }))];
+  const cards = [
+    ...scopedProspects,
+    ...scopedLeases.map((l) => ({
+      id: l.id,
+      srNumber: l.srNumber,
+      tenantName: getTenant(l.tenantId)?.name ?? "—",
+      propertyIds: l.propertyIds,
+      broker: getTenant(l.tenantId)?.broker,
+      submittedBy: "System",
+      stage: l.status,
+      expectedRent: l.leaseAmount,
+      stageHistory: [],
+    })),
+  ];
 
   const uniqueCards = cards.filter(
     (c, i, arr) => arr.findIndex((x) => x.srNumber === c.srNumber) === i
@@ -92,24 +90,30 @@ function LeasesPageInner() {
   return (
     <div>
       <PageHeader
-        title="Leases & tenants"
-        description="Pipeline, active tenants, and lease files"
-        crumbs={[{ label: "Home", href: "/dashboard" }, { label: "Leases & Tenants" }]}
+        title="Leases"
+        description="Active lease files and prospect pipeline"
+        crumbs={[{ label: "Home", href: "/dashboard" }, { label: "Leases" }]}
       />
 
-      <Tabs defaultValue={search.get("tab") === "pipeline" ? "pipeline" : "tenants"}>
+      <Tabs defaultValue={search.get("tab") === "pipeline" ? "pipeline" : "leases"}>
         <TabsList>
-          <TabsTrigger value="tenants">Tenant list</TabsTrigger>
-          <TabsTrigger value="pipeline">Tenant pipeline</TabsTrigger>
+          <TabsTrigger value="leases">Lease list</TabsTrigger>
+          <TabsTrigger value="pipeline">Pipeline</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="tenants" className="space-y-3">
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search tenant or SR…" className="max-w-sm" />
+        <TabsContent value="leases" className="space-y-3">
+          <Input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Search tenant or SR…"
+            className="max-w-sm"
+          />
           <Card>
             <CardContent className="px-0">
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead>Lease</TableHead>
                     <TableHead>Tenant</TableHead>
                     <TableHead>Property</TableHead>
                     <TableHead>Period</TableHead>
@@ -120,24 +124,43 @@ function LeasesPageInner() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {tenants.map((l) => {
+                  {leaseRows.map((l) => {
                     const t = getTenant(l.tenantId);
                     return (
                       <TableRow key={l.id}>
                         <TableCell>
-                          <Link href={`/leases/${l.id}`} className="font-medium text-indigo-700 hover:underline">
-                            {t?.name}
+                          <Link
+                            href={`/leases/${l.id}`}
+                            className="font-medium text-indigo-700 hover:underline"
+                          >
+                            {l.srNumber}
                           </Link>
-                          <div className="text-xs text-slate-400">{l.srNumber}</div>
                         </TableCell>
                         <TableCell>
-                          {l.propertyIds.map((id) => getProperty(id)?.code).filter(Boolean).join(", ")}
+                          {t ? (
+                            <Link
+                              href={`/tenants/${t.id}`}
+                              className="text-indigo-700 hover:underline"
+                            >
+                              {t.name}
+                            </Link>
+                          ) : (
+                            "—"
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {l.propertyIds
+                            .map((id) => getProperty(id)?.code)
+                            .filter(Boolean)
+                            .join(", ")}
                         </TableCell>
                         <TableCell className="text-xs">
                           {formatDate(l.startDate)} – {formatDate(l.endDate)}
                         </TableCell>
                         <TableCell>{formatINR(l.leaseAmount)}</TableCell>
-                        <TableCell><StatusBadge value={l.status} /></TableCell>
+                        <TableCell>
+                          <StatusBadge value={l.status} />
+                        </TableCell>
                         <TableCell>{formatDate(l.nextDueDate)}</TableCell>
                         <TableCell>
                           {l.outstanding > 0 ? (
@@ -162,7 +185,10 @@ function LeasesPageInner() {
             {STAGES.map((stage) => {
               const col = uniqueCards.filter((c) => c.stage === stage);
               return (
-                <div key={stage} className="w-64 shrink-0 rounded-xl border border-slate-200 bg-slate-50 p-2">
+                <div
+                  key={stage}
+                  className="w-64 shrink-0 rounded-xl border border-slate-200 bg-slate-50 p-2"
+                >
                   <div className="mb-2 flex items-center justify-between px-1">
                     <div className="text-xs font-semibold text-slate-700">{stage}</div>
                     <div className="text-[11px] text-slate-400">{col.length}</div>
@@ -178,7 +204,10 @@ function LeasesPageInner() {
                         <div className="text-[11px] font-medium text-indigo-600">{c.srNumber}</div>
                         <div className="mt-0.5 text-sm font-semibold">{c.tenantName}</div>
                         <div className="mt-1 text-[11px] text-slate-500">
-                          {c.propertyIds.map((id) => getProperty(id)?.code).filter(Boolean).join(", ")}
+                          {c.propertyIds
+                            .map((id) => getProperty(id)?.code)
+                            .filter(Boolean)
+                            .join(", ")}
                         </div>
                         <div className="mt-2 flex items-center justify-between">
                           <StatusBadge value={c.stage} />
@@ -197,14 +226,19 @@ function LeasesPageInner() {
       <Dialog open={Boolean(open)} onOpenChange={() => setOpen(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{prospect?.srNumber} · {prospect?.tenantName}</DialogTitle>
+            <DialogTitle>
+              {prospect?.srNumber} · {prospect?.tenantName}
+            </DialogTitle>
           </DialogHeader>
           {prospect ? (
             <div className="space-y-3 text-sm">
               <div>Submitted by {prospect.submittedBy}</div>
               <div>
                 Property:{" "}
-                {prospect.propertyIds.map((id) => getProperty(id)?.name).filter(Boolean).join(", ")}
+                {prospect.propertyIds
+                  .map((id) => getProperty(id)?.name)
+                  .filter(Boolean)
+                  .join(", ")}
               </div>
               <div>Expected rent: {formatINR(prospect.expectedRent)}</div>
               <div className="space-y-2">

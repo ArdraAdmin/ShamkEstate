@@ -206,14 +206,20 @@ export interface EscalationStep {
   percent: number;
 }
 
+export type TenantType = "Individual" | "Company";
+
 export interface Tenant {
   id: string;
   name: string;
+  type: TenantType;
   email: string;
   phone: string;
   company: string;
   kycStatus: "Complete" | "Pending" | "Partial";
   broker?: string;
+  pan?: string;
+  address?: string;
+  notes?: string;
 }
 
 export interface Prospect {

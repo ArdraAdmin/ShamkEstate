@@ -26,15 +26,16 @@ import {
   assets,
   getCompany,
   getOwner,
-  getProperty,
   propertyDocuments,
   propertyExpensesTotal,
   propertyHistory,
 } from "@/lib/data";
+import { useEstateStore } from "@/lib/estate-store";
 import { daysLeftBadge, formatDate, formatINR } from "@/lib/format";
 
 export default function PropertyProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  const { getProperty } = useEstateStore();
   const property = getProperty(id);
   const [docOpen, setDocOpen] = useState<string | null>(null);
   const expenseTotal = property ? propertyExpensesTotal(property) : 0;
@@ -87,7 +88,9 @@ export default function PropertyProfilePage({ params }: { params: Promise<{ id: 
         actions={
           <>
             <StatusBadge value={property.status} />
-            <Button variant="outline">Assign tenant</Button>
+            <Button variant="outline" asChild>
+              <Link href={`/tenants/assign?propertyId=${property.id}`}>Assign tenant</Link>
+            </Button>
             <Button>Edit property</Button>
           </>
         }

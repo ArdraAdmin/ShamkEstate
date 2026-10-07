@@ -1,6 +1,7 @@
 "use client";
 
 import { use, useState } from "react";
+import Link from "next/link";
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { PageHeader } from "@/components/page-header";
 import { StatusBadge } from "@/components/status-badge";
@@ -10,12 +11,14 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { getLease, getOwner, getProperty, getTenant, leaseDocuments } from "@/lib/data";
+import { getOwner, leaseDocuments } from "@/lib/data";
+import { useEstateStore } from "@/lib/estate-store";
 import { formatDate, formatINR } from "@/lib/format";
 import { buildRentSchedule } from "@/lib/rent-schedule";
 
 export default function LeaseProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  const { getLease, getProperty, getTenant } = useEstateStore();
   const lease = getLease(id);
   const [agreement, setAgreement] = useState(false);
   const [vacate, setVacate] = useState(false);
@@ -51,12 +54,17 @@ export default function LeaseProfilePage({ params }: { params: Promise<{ id: str
         description={`${lease.srNumber} · ${props.map((p) => p!.code).join(", ")}`}
         crumbs={[
           { label: "Home", href: "/dashboard" },
-          { label: "Leases & Tenants", href: "/leases" },
+          { label: "Leases", href: "/leases" },
           { label: lease.srNumber },
         ]}
         actions={
           <>
             <StatusBadge value={lease.status} />
+            {tenant ? (
+              <Button variant="outline" asChild>
+                <Link href={`/tenants/${tenant.id}`}>Tenant profile</Link>
+              </Button>
+            ) : null}
             <Button variant="outline" onClick={() => setAgreement(true)}>Generate agreement</Button>
             <Button variant="outline" onClick={() => setRenew(true)}>Renew lease</Button>
             <Button variant="destructive" onClick={() => setVacate(true)}>End lease / vacate</Button>

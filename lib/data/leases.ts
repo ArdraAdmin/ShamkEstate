@@ -1,21 +1,21 @@
 import type { EstateDocument, Lease, Prospect, Tenant } from "./types";
 
 export const tenants: Tenant[] = [
-  { id: "t-apex", name: "Apex Digital Pvt Ltd", email: "accounts@apexdigital.in", phone: "+91 22 4001 2100", company: "Apex Digital Pvt Ltd", kycStatus: "Complete", broker: "Rajan Kothari" },
-  { id: "t-nair", name: "Priya Nair", email: "priya.nair@gmail.com", phone: "+91 98190 33421", company: "Individual", kycStatus: "Complete", broker: "Devika Patil" },
-  { id: "t-lumen", name: "Lumen Analytics", email: "ops@lumenanalytics.co", phone: "+91 22 4890 1100", company: "Lumen Analytics LLP", kycStatus: "Complete", broker: "Sana Merchant" },
-  { id: "t-helix", name: "Helix Labs", email: "finance@helixlabs.io", phone: "+91 22 4012 8800", company: "Helix Labs Pvt Ltd", kycStatus: "Complete" },
-  { id: "t-mehta", name: "Rohan Mehta", email: "rohan.mehta@outlook.com", phone: "+91 98203 11876", company: "Individual", kycStatus: "Complete", broker: "Sana Merchant" },
-  { id: "t-atelier", name: "Atelier North", email: "hello@ateliernorth.com", phone: "+91 22 2642 0091", company: "Atelier North", kycStatus: "Complete" },
-  { id: "t-orbit", name: "Orbit Freight India", email: "lease@orbitfreight.in", phone: "+91 22 6654 3000", company: "Orbit Freight India Pvt Ltd", kycStatus: "Complete", broker: "Rajan Kothari" },
-  { id: "t-kapoor", name: "Ananya Kapoor", email: "ananya.kapoor@icloud.com", phone: "+91 99300 22811", company: "Individual", kycStatus: "Complete" },
-  { id: "t-sato", name: "Kenji Sato", email: "kenji.sato@jp-expat.com", phone: "+91 98700 44120", company: "Individual", kycStatus: "Complete", broker: "Sana Merchant" },
-  { id: "t-bloom", name: "Bloom & Co.", email: "stores@bloomandco.in", phone: "+91 22 2648 7721", company: "Bloom & Co.", kycStatus: "Partial" },
-  { id: "t-desai", name: "Karan Desai", email: "karan.desai@yahoo.com", phone: "+91 97690 11028", company: "Individual", kycStatus: "Complete" },
-  { id: "t-nimbus", name: "Nimbus Soft", email: "admin@nimbussoft.in", phone: "+91 20 6712 4400", company: "Nimbus Soft Pvt Ltd", kycStatus: "Complete", broker: "Devika Patil" },
-  { id: "t-iyer", name: "Sneha Iyer", email: "sneha.iyer@gmail.com", phone: "+91 98810 22934", company: "Individual", kycStatus: "Complete" },
-  { id: "t-varma", name: "Aditya Varma", email: "aditya.varma@gmail.com", phone: "+91 98198 77654", company: "Individual", kycStatus: "Pending" },
-  { id: "t-prospect-q", name: "Quill Retail", email: "cfo@quillretail.in", phone: "+91 22 4000 1212", company: "Quill Retail", kycStatus: "Pending", broker: "Sana Merchant" },
+  { id: "t-apex", name: "Apex Digital Pvt Ltd", type: "Company", email: "accounts@apexdigital.in", phone: "+91 22 4001 2100", company: "Apex Digital Pvt Ltd", kycStatus: "Complete", broker: "Rajan Kothari" },
+  { id: "t-nair", name: "Priya Nair", type: "Individual", email: "priya.nair@gmail.com", phone: "+91 98190 33421", company: "Individual", kycStatus: "Complete", broker: "Devika Patil" },
+  { id: "t-lumen", name: "Lumen Analytics", type: "Company", email: "ops@lumenanalytics.co", phone: "+91 22 4890 1100", company: "Lumen Analytics LLP", kycStatus: "Complete", broker: "Sana Merchant" },
+  { id: "t-helix", name: "Helix Labs", type: "Company", email: "finance@helixlabs.io", phone: "+91 22 4012 8800", company: "Helix Labs Pvt Ltd", kycStatus: "Complete" },
+  { id: "t-mehta", name: "Rohan Mehta", type: "Individual", email: "rohan.mehta@outlook.com", phone: "+91 98203 11876", company: "Individual", kycStatus: "Complete", broker: "Sana Merchant" },
+  { id: "t-atelier", name: "Atelier North", type: "Company", email: "hello@ateliernorth.com", phone: "+91 22 2642 0091", company: "Atelier North", kycStatus: "Complete" },
+  { id: "t-orbit", name: "Orbit Freight India", type: "Company", email: "lease@orbitfreight.in", phone: "+91 22 6654 3000", company: "Orbit Freight India Pvt Ltd", kycStatus: "Complete", broker: "Rajan Kothari" },
+  { id: "t-kapoor", name: "Ananya Kapoor", type: "Individual", email: "ananya.kapoor@icloud.com", phone: "+91 99300 22811", company: "Individual", kycStatus: "Complete" },
+  { id: "t-sato", name: "Kenji Sato", type: "Individual", email: "kenji.sato@jp-expat.com", phone: "+91 98700 44120", company: "Individual", kycStatus: "Complete", broker: "Sana Merchant" },
+  { id: "t-bloom", name: "Bloom & Co.", type: "Company", email: "stores@bloomandco.in", phone: "+91 22 2648 7721", company: "Bloom & Co.", kycStatus: "Partial" },
+  { id: "t-desai", name: "Karan Desai", type: "Individual", email: "karan.desai@yahoo.com", phone: "+91 97690 11028", company: "Individual", kycStatus: "Complete" },
+  { id: "t-nimbus", name: "Nimbus Soft", type: "Company", email: "admin@nimbussoft.in", phone: "+91 20 6712 4400", company: "Nimbus Soft Pvt Ltd", kycStatus: "Complete", broker: "Devika Patil" },
+  { id: "t-iyer", name: "Sneha Iyer", type: "Individual", email: "sneha.iyer@gmail.com", phone: "+91 98810 22934", company: "Individual", kycStatus: "Complete" },
+  { id: "t-varma", name: "Aditya Varma", type: "Individual", email: "aditya.varma@gmail.com", phone: "+91 98198 77654", company: "Individual", kycStatus: "Pending" },
+  { id: "t-prospect-q", name: "Quill Retail", type: "Company", email: "cfo@quillretail.in", phone: "+91 22 4000 1212", company: "Quill Retail", kycStatus: "Pending", broker: "Sana Merchant" },
 ];
 
 export const leases: Lease[] = [

@@ -11,6 +11,7 @@ import {
   Settings,
   Shield,
   FileKey2,
+  UserRound,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -23,7 +24,8 @@ const nav = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, module: "reports" as const },
   { href: "/properties", label: "Properties", icon: Building2, module: "properties" as const },
   { href: "/assets", label: "Assets", icon: Package, module: "assets" as const },
-  { href: "/leases", label: "Leases & Tenants", icon: FileKey2, module: "leases" as const },
+  { href: "/tenants", label: "Tenants", icon: UserRound, module: "leases" as const },
+  { href: "/leases", label: "Leases", icon: FileKey2, module: "leases" as const },
   { href: "/users", label: "User Management", icon: Shield, module: "userManagement" as const },
 ];
 
